@@ -1,0 +1,22 @@
+{
+  "name": "adyen-4sq-challenge",
+  "version": "1.0.0",
+  "description": "Adyen't Foursquare challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucas1981/4sq.git"
+  },
+  "keywords": [
+    "foursquare"
+  ],
+  "author": "Lucas van Heerikhuizen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lucas1981/4sq/issues"
+  },
+  "homepage": "https://github.com/Lucas1981/4sq#readme"
+}

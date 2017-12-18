@@ -1,8 +1,8 @@
 {
   "name": "adyen-4sq-challenge",
   "version": "1.0.0",
-  "description": "Adyen't Foursquare challenge",
-  "main": "index.js",
+  "description": "Adyens' Foursquare challenge",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

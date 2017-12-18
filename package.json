@@ -18,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/Lucas1981/4sq/issues"
   },
-  "homepage": "https://github.com/Lucas1981/4sq#readme"
+  "homepage": "https://github.com/Lucas1981/4sq#readme",
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "devDependencies": {
+    "angular": "^1.6.7"
+  }
 }

@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -411,10 +411,85 @@ minFrac:2,minInt:1,negPre:"-\u00a4",negSuf:"",posPre:"\u00a4",posSuf:""}]},id:"e
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
+/* File: ./src/4sq-backend-service.js */
+
+class AdyenFoursquareBackendService {
+
+  constructor($http, AdyenFoursquareConstants) {
+    this.$http = $http;
+    this.clientId = AdyenFoursquareConstants.clientId;
+    this.clientSecret = AdyenFoursquareConstants.clientSecret;
+    this.redirectUri = AdyenFoursquareConstants.redirectUri;
+    this.accessToken = '';
+  }
+
+  setAccessToken(accessToken) {
+    this.accessToken = accessToken;
+  }
+
+  getAccessToken() {
+    return this.accessToken;
+  }
+
+  exchangeCodeForAccessToken(code, callback) {
+    const self = this;
+    return this.$http.get('../backend/exchange-code-for-access-token.php', {
+      params: {
+        client_id: self.clientId,
+        client_secret: self.clientSecret,
+        grant_type: 'authorization_code',
+        redirect_uri: self.redirectUri,
+        code: code
+      },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }).then(function(response) {
+      callback(response.data);
+    }, function(err) {
+      callback(false);
+    });
+  }
+
+  getVenues(ll, radius, callback) {
+    const self = this;
+    return this.$http.get('https://api.foursquare.com/v2/venues/explore', {
+      params: {
+        ll: ll,
+        oauth_token: self.accessToken,
+        v: "20170801",
+        radius: radius,
+        limit: 50
+      }
+    }).then(function(response) {
+      callback(response.data.response);
+    }, function(err) {
+      callback(false);
+    });
+  }
+
+}
+/* harmony export (immutable) */ exports["a"] = AdyenFoursquareBackendService;
+
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* File: ./src/4sq-controller.js */
+
 class AdyenFoursquareController {
 
-  constructor(AdyenFoursquareService) {
+  constructor(
+    AdyenFoursquareBackendService,
+    AdyenFoursquareToolService,
+    AdyenFoursquareConstants,
+    $window
+  ) {
     const self = this;
+
     this.positionPromise = new Promise(function(resolve, reject) {
       navigator.geolocation.getCurrentPosition(function(position) {
         self.latitude = position.coords.latitude;
@@ -423,26 +498,62 @@ class AdyenFoursquareController {
         resolve('Latitude and longitude have been obtained');
       });
     });
-    this.positionPromise.then(function() {
-      self.getVenues();
-    });
     this.venues = [];
-    this.AdyenFoursquareService = AdyenFoursquareService;
+    this.$window = $window;
+    this.AdyenFoursquareBackendService = AdyenFoursquareBackendService;
+    this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.radius = 250;
     this.canRenderLL = false;
     this.lockdown = true;
+    this.clientId = AdyenFoursquareConstants.clientId;
+    this.clientSecred = AdyenFoursquareConstants.clientSecret;
+    this.redirectUri = AdyenFoursquareConstants.redirectUri;
+
+    this.validateCode();
+
+  }
+
+  validateCode() {
+
+    const self = this;
+    const redirect = 'https://foursquare.com/oauth2/authenticate' +
+      '?client_id=' + this.clientId +
+      '&response_type=code' +
+      '&redirect_uri=' + this.redirectUri;
+
+    let getVariables = this.AdyenFoursquareToolService.extractGetVariables();
+
+    /* Do we have a code? */
+    if(getVariables.hasOwnProperty('code')) {
+      /* If so, validate it */
+      this.AdyenFoursquareBackendService.exchangeCodeForAccessToken(getVariables.code, function(result) {
+        if(result !== false) {
+          self.AdyenFoursquareBackendService.setAccessToken(result.access_token);
+          self.positionPromise.then(function() {
+            self.getVenues();
+          });
+        }
+        else {
+          self.$window.location.href = redirect;
+        }
+      });
+    }
+    else {
+      /* Otherwise, redirect to login screen */
+      self.$window.location.href = redirect;
+    }
   }
 
   radiusChanged() {
     const self = this;
     this.positionPromise.then(function() {
-      self.getVenues();
+      if(self.AdyenFoursquareBackendService.getAccessToken() !== '') self.getVenues();
     });
   }
 
   getVenues() {
     const self = this;
-    self.AdyenFoursquareService.getVenues(self.renderLL(), self.radius, function(result) {
+    self.AdyenFoursquareBackendService.getVenues(self.renderLL(), self.radius, function(result) {
       if(result !== false) {
         self.venues = result.groups[0].items;
       }
@@ -459,56 +570,94 @@ class AdyenFoursquareController {
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-class AdyenFoursquareService {
-  constructor($http) {
-    this.$http = $http;
-    console.log('service is running');
+/* File: ./src/4sq-tool-service.js */
+
+class AdyenFoursquareToolService {
+
+  constructor($document) {
+    this.$document = $document;
   }
 
-  getVenues(ll, radius, callback) {
-    return this.$http.get('https://api.foursquare.com/v2/venues/explore', {
-      params: {
-        ll: ll,
-        client_id: 'TK5IMOUDNNXXXO3SGTIQY5HUEHCFLWAFVH2SFPZ1IWE5GIQR',
-        client_secret: 'JOBVGABWPJGLQEWPWM4UKAMKFD5X52CBTC5VHG2TSOQPVQ5O',
-        v: "20170801",
-        radius: radius,
-        limit: 50
+  extractGetVariables() {
+    let query = null;
+    let getVariables = {};
+    let aux = null;
+    let i, l;
+
+    /* Based on: http://stackoverflow.com/questions/12049620/how-to-get-get-variables-value-in-javascript */
+    if(this.$document[0].location.href.toString().indexOf('?') !== -1) {
+      query = this.$document[0].location.href
+        .toString()
+        .replace(/^.*?\?/, '')
+        .split('&');
+
+      for(i = 0, l = query.length; i < l; i++) {
+        aux = decodeURIComponent(query[i]).split('=');
+        getVariables[aux[0]] = aux[1].split('#')[0]; /* Might contain angular stuff, so take that out */
       }
-    }).then(function(response) {
-      callback(response.data.response);
-    }, function(err) {
-      callback(false);
-    });
+    }
+    else {
+      return false;
+    }
+
+    return getVariables;
+
   }
 
 }
-/* harmony export (immutable) */ exports["a"] = AdyenFoursquareService;
+/* harmony export (immutable) */ exports["a"] = AdyenFoursquareToolService;
 
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_angular_angular_min_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_angular_angular_min_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_angular_angular_min_js__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__4sq_controller_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__4sq_service_js__ = __webpack_require__(2);
-/* jshint esversion: 6 */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__4sq_constants_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__4sq_backend_service_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__4sq_tool_service_js__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__4sq_controller_js__ = __webpack_require__(2);
+/* File: ./src/entry.js */
 
 
 
 
 
-angular.module('adyenFoursquareModule', [] )
-  .factory('AdyenFoursquareService', __WEBPACK_IMPORTED_MODULE_2__4sq_service_js__["a" /* AdyenFoursquareService */])
-  .controller('AdyenFoursquareController', __WEBPACK_IMPORTED_MODULE_1__4sq_controller_js__["a" /* AdyenFoursquareController */]);
+
+
+(function() {
+  'use strict';
+
+  angular.module('adyenFoursquareModule', [] )
+    .constant('AdyenFoursquareConstants', __WEBPACK_IMPORTED_MODULE_1__4sq_constants_js__["a" /* AdyenFoursquareConstants */])
+    .factory('AdyenFoursquareToolService', __WEBPACK_IMPORTED_MODULE_3__4sq_tool_service_js__["a" /* AdyenFoursquareToolService */])
+    .factory('AdyenFoursquareBackendService', __WEBPACK_IMPORTED_MODULE_2__4sq_backend_service_js__["a" /* AdyenFoursquareBackendService */])
+    .controller('AdyenFoursquareController', __WEBPACK_IMPORTED_MODULE_4__4sq_controller_js__["a" /* AdyenFoursquareController */]);
+
+})();
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+"use strict";
+/* File: ./src/4sq-constants.js */
+
+const AdyenFoursquareConstants = {
+  clientId: 'TK5IMOUDNNXXXO3SGTIQY5HUEHCFLWAFVH2SFPZ1IWE5GIQR',
+  clientSecret: 'JOBVGABWPJGLQEWPWM4UKAMKFD5X52CBTC5VHG2TSOQPVQ5O',
+  redirectUri: 'http://localhost/adyen/4sq/dist'
+};
+/* harmony export (immutable) */ exports["a"] = AdyenFoursquareConstants;
+
 
 
 /***/ }

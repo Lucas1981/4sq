@@ -6,17 +6,51 @@
       min="25"
       max="3000"
       step="25"
-      value="250"
+      value="400"
       ng-model="adyenFoursquareCtrl.radius"
       ng-change="adyenFoursquareCtrl.radiusChanged()"
       ng-disabled="adyenFoursquareCtrl.lockdown"
     >
   </p>
   <p>Radius: {{adyenFoursquareCtrl.radius}} meters</p>
-  <p>Number of venues found: {{adyenFoursquareCtrl.venues.length}} </p>
-  <ul>
-    <li ng-repeat="venue in adyenFoursquareCtrl.venues">
-      {{venue.venue.name}}
-    </li>
-  </ul>
+  <p>Number of venues found in a {{adyenFoursquareCtrl.radius}} meter radius around {{adyenFoursquareCtrl.headerLocation}}: {{adyenFoursquareCtrl.venues.length}} </p>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th class="col-md-2">Name</th>
+        <th class="col-md-2">Location</th>
+        <th class="col-md-3">Open?</th>
+        <th class="col-md-2">Phone</th>
+        <th class="col-md-3">Rating</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="venue in adyenFoursquareCtrl.venues">
+        <td class="col-md-2">{{venue.name}}</td>
+        <td class="col-md-2">{{venue.location}}</td>
+        <td class="col-md-3">{{venue.openingHours}}</td>
+        <td class="col-md-2">{{venue.phone}}</td>
+        <td class="col-md-3">
+
+          <div ng-if="venue.rating != -1" class="progress">
+            <div
+              class="progress-bar"
+              role="progressbar"
+              aria-valuenow="{{venue.rating}}"
+              aria-valuemin="0"
+              aria-valuemax="10"
+              style="width:{{venue.rating * 10}}%"
+            >
+              <span>{{venue.rating}}</span>
+            </div>
+          </div>
+
+          <div ng-if="venue.rating == -1">
+            No rating
+          </div>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

@@ -18,7 +18,6 @@ export default class AdyenFoursquareBackendService {
   }
 
   exchangeCodeForAccessToken(code, callback) {
-    const self = this;
     return this.$http.get('../backend/exchange-code-for-access-token.php', {
       params: {
         code: code
@@ -26,26 +25,25 @@ export default class AdyenFoursquareBackendService {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
-    }).then(function(response) {
+    }).then((response) => {
       callback(response.data);
-    }, function(err) {
+    }, (err) => {
       callback(false);
     });
   }
 
   getVenues(ll, radius, callback) {
-    const self = this;
     return this.$http.get('https://api.foursquare.com/v2/venues/explore', {
       params: {
         ll: ll,
-        oauth_token: self.accessToken,
+        oauth_token: this.accessToken,
         v: "20170801",
         radius: radius,
         limit: this.limit
       }
-    }).then(function(response) {
+    }).then((response) => {
       callback(response.data.response);
-    }, function(err) {
+    }, (err) => {
       callback(false);
     });
   }

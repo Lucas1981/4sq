@@ -8,7 +8,7 @@ import AdyenFoursquareBackendService from './4sq-backend-service.js';
 import AdyenFoursquareToolService from './4sq-tool-service.js';
 import AdyenFoursquareController from './4sq-controller.js';
 
-(function() {
+(() => {
   'use strict';
 
   angular.module('adyenFoursquareModule', [] )

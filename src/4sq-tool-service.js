@@ -2,8 +2,9 @@
 
 export default class AdyenFoursquareToolService {
 
-  constructor($document) {
+  constructor($document, $timeout) {
     this.$document = $document;
+    this.$timeout = $timeout;
   }
 
   extractGetVariables() {
@@ -30,6 +31,12 @@ export default class AdyenFoursquareToolService {
 
     return getVariables;
 
+  }
+
+  waitForCycle(callback) {
+    this.$timeout(() => {
+      callback();
+    }, 0);
   }
 
 }

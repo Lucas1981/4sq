@@ -1,6 +1,12 @@
+<div ng-if="adyenFoursquareCtrl.isLoading === true" class="adyen-foursquare-fade adyen-foursquare-loading-overlay">
+    <span class="glyphicon glyphicon-repeat adyen-foursquare-loader"></span>
+    <i>Loading app</i>
+</div>
+
 <div class="adyen-foursquare-wrapper container">
-  <h1>Adyens' Foursquare challenge</h1>
-  <p>
+  <h1>Adyen Foursquare challenge</h1>
+  <p>Move the slider around to change the radius with steps of 25 meters</p>
+  <div class="adyen-foursquare-slider-container">
     <input
       type="range"
       min="25"
@@ -10,11 +16,23 @@
       ng-model="adyenFoursquareCtrl.radius"
       ng-change="adyenFoursquareCtrl.radiusChanged()"
       ng-disabled="adyenFoursquareCtrl.lockdown"
+      class="adyen-foursquare-slider {{ adyenFoursquareCtrl.lockdown === true ? 'adyen-foursquare-slider-lockdown' : null}}"
     >
-  </p>
-  <p>Radius: {{adyenFoursquareCtrl.radius}} meters</p>
-  <p>Number of venues found in a {{adyenFoursquareCtrl.radius}} meter radius around {{adyenFoursquareCtrl.headerLocation}}: {{adyenFoursquareCtrl.venues.length}} </p>
-  <table class="table table-striped">
+  </div>
+  <small>
+    <div class="row">
+      <div class="col-xs-6">
+        25
+      </div>
+      <div class="col-xs-6 text-right">
+        3000
+      </div>
+    </div>
+  </small>
+
+  <h3>Number of venues found in a {{adyenFoursquareCtrl.radius}} meter radius around {{adyenFoursquareCtrl.headerLocation}}: {{adyenFoursquareCtrl.venues.length}} </h3>
+
+  <table class="table table-striped visible-md visible-lg">
     <thead>
       <tr>
         <th class="col-md-2">Name</th>
@@ -52,5 +70,19 @@
         </td>
       </tr>
     </tbody>
+  </table>
+
+  <table class="table table-striped visible-xs visible-sm">
+    <tr ng-repeat="venue in adyenFoursquareCtrl.venues">
+      <td>
+        <p>Name: {{venue.name}}</p>
+        <p>Location: {{venue.location}}</p>
+        <p>Open: {{venue.openingHours}}</p>
+        <p>Phone: {{venue.phone}}</p>
+        <p>Rating: {{adyenFoursquareCtrl.determineMobileRating(venue.rating)}}
+
+        </p>
+      </td>
+    </tr>
   </table>
 </div>

@@ -2,4 +2,6 @@
 
 $icon-font-path: "../node_modules/bootstrap-sass/assets/fonts/bootstrap/";
 @import "../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "./components/slider/slider";
+@import "./components/loader/loader";
 @import "./4sq";

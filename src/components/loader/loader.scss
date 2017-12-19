@@ -1,0 +1,12 @@
+/* File: ./src/components/loader/loader.scss */
+
+/* Loader is based on https://www.w3schools.com/howto/howto_css_loader.asp */
+
+.adyen-foursquare-loader {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

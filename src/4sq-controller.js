@@ -5,8 +5,10 @@ export default class AdyenFoursquareController {
   constructor(
     AdyenFoursquareBackendService,
     AdyenFoursquareToolService,
-    $timeout
+    $timeout,
+    $document
   ) {
+
     this.positionPromise = new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
@@ -15,6 +17,7 @@ export default class AdyenFoursquareController {
         resolve('Latitude and longitude have been obtained');
       });
     });
+    this.isLoading = true;
     this.venues = [];
     this.AdyenFoursquareBackendService = AdyenFoursquareBackendService;
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
@@ -22,6 +25,7 @@ export default class AdyenFoursquareController {
     this.canRenderLL = false;
     this.lockdown = true;
     this.$timeout = $timeout;
+    this.$document = $document;
     this.myTimeout = null;
     this.myTimeoutInterval = 300; /* 300 ms */
 
@@ -40,7 +44,11 @@ export default class AdyenFoursquareController {
         if(result !== false && !result.hasOwnProperty('error')) {
           this.AdyenFoursquareBackendService.setAccessToken(result.access_token);
           this.positionPromise.then(() => {
-            this.getVenues();
+            this.getVenues().then(() => {
+              this.AdyenFoursquareToolService.waitForCycle(() => {
+                this.isLoading = false;
+              });
+            });
           });
         }
         else {
@@ -59,7 +67,6 @@ export default class AdyenFoursquareController {
     if(this.myTimeout !== 0) this.$timeout.cancel(this.myTimeout);
 
     this.myTimeout = this.$timeout(() => {
-      console.log('Running timeout func');
       this.positionPromise.then(() => {
         if(this.AdyenFoursquareBackendService.getAccessToken() !== '') this.getVenues();
       });
@@ -67,13 +74,16 @@ export default class AdyenFoursquareController {
   }
 
   getVenues() {
-    this.lockdown = true;
-    this.AdyenFoursquareBackendService.getVenues(this.renderLL(), this.radius, (result) => {
-      this.lockdown = false;
-      if(result !== false) {
-        this.headerLocation = result.headerLocation;
-        this.venues = this.renderMapping(result.groups[0].items);
-      }
+    return new Promise((resolve, reject) => {
+      this.lockdown = true;
+      this.AdyenFoursquareBackendService.getVenues(this.renderLL(), this.radius, (result) => {
+        this.lockdown = false;
+        if(result !== false) {
+          this.headerLocation = result.headerLocation;
+          this.venues = this.renderMapping(result.groups[0].items);
+          resolve('Done getting venues');
+        }
+      });
     });
   }
 
@@ -96,7 +106,12 @@ export default class AdyenFoursquareController {
   determineOpeningHours(e) {
     return ( e.venue.hasOwnProperty('hours') && e.venue.hours.hasOwnProperty('status') ) ?
       e.venue.hours.status :
-      'Likely closed';
+      'No information available';
+  }
+
+  determineMobileRating(rating) {
+    if(rating == -1) return 'No rating';
+    return rating + ' / 10';
   }
 
 }

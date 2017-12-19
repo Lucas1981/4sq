@@ -1,0 +1,22 @@
+<div class="adyen-foursquare-wrapper container">
+  <h1>Adyens' Foursquare challenge</h1>
+  <p>
+    <input
+      type="range"
+      min="25"
+      max="3000"
+      step="25"
+      value="250"
+      ng-model="adyenFoursquareCtrl.radius"
+      ng-change="adyenFoursquareCtrl.radiusChanged()"
+      ng-disabled="adyenFoursquareCtrl.lockdown"
+    >
+  </p>
+  <p>Radius: {{adyenFoursquareCtrl.radius}} meters</p>
+  <p>Number of venues found: {{adyenFoursquareCtrl.venues.length}} </p>
+  <ul>
+    <li ng-repeat="venue in adyenFoursquareCtrl.venues">
+      {{venue.venue.name}}
+    </li>
+  </ul>
+</div>

@@ -1,6 +1,6 @@
 /* File: ./src/4sq-backend-service.js */
 
-export class AdyenFoursquareBackendService {
+export default class AdyenFoursquareBackendService {
 
   constructor($http) {
     this.$http = $http;

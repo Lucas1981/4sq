@@ -3,9 +3,10 @@
 import './main.scss';
 
 import '../node_modules/angular/angular.min.js';
-import { AdyenFoursquareBackendService } from './4sq-backend-service.js';
-import { AdyenFoursquareToolService } from './4sq-tool-service.js';
-import { AdyenFoursquareController } from './4sq-controller.js';
+import AdyenFoursquareComponent from './4sq-component.js';
+import AdyenFoursquareBackendService from './4sq-backend-service.js';
+import AdyenFoursquareToolService from './4sq-tool-service.js';
+import AdyenFoursquareController from './4sq-controller.js';
 
 (function() {
   'use strict';
@@ -13,6 +14,7 @@ import { AdyenFoursquareController } from './4sq-controller.js';
   angular.module('adyenFoursquareModule', [] )
     .factory('AdyenFoursquareToolService', AdyenFoursquareToolService)
     .factory('AdyenFoursquareBackendService', AdyenFoursquareBackendService)
-    .controller('AdyenFoursquareController', AdyenFoursquareController);
+    .controller('AdyenFoursquareController', AdyenFoursquareController)
+    .component('adyenFoursquare', AdyenFoursquareComponent);
 
 })();

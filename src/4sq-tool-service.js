@@ -1,6 +1,6 @@
 /* File: ./src/4sq-tool-service.js */
 
-export class AdyenFoursquareToolService {
+export default class AdyenFoursquareToolService {
 
   constructor($document) {
     this.$document = $document;

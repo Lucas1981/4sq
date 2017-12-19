@@ -13,6 +13,11 @@ module.exports = {
       {
           test: /\.scss$/,
           loaders: ["style", "css", "sass"]
+      },
+      {
+          test: /\.html$/,
+          exclude: /node_modules/,
+          loader: 'html-loader'
       }
     ],
   }

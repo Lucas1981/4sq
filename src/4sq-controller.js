@@ -1,6 +1,6 @@
 /* File: ./src/4sq-controller.js */
 
-export class AdyenFoursquareController {
+export default class AdyenFoursquareController {
 
   constructor(
     AdyenFoursquareBackendService,
@@ -24,8 +24,11 @@ export class AdyenFoursquareController {
     this.radius = 250;
     this.canRenderLL = false;
     this.lockdown = true;
+    this.debug = false;
 
     this.validateCode();
+
+    if(this.debug) console.log('AdyenFoursquareController running');
 
   }
 

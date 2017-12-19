@@ -1,7 +1,10 @@
 /* File: ./src/main.scss */
 
 $icon-font-path: "../node_modules/bootstrap-sass/assets/fonts/bootstrap/";
+
 @import "../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "./components/slider/slider";
 @import "./components/loader/loader";
-@import "./4sq";
+@import './components/fade/fade';
+@import './components/overlay/overlay';
+@import "./a4sq";

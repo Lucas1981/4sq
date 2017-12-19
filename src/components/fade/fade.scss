@@ -1,0 +1,21 @@
+/* File: ./src/components/fade/fade.scss */
+
+$adyen-foursquare-fade-time: 0.4s;
+
+.adyen-foursquare-fade.ng-enter {
+  transition: $adyen-foursquare-fade-time linear all;
+  opacity: 0;
+}
+
+.adyen-foursquare-fade.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+.adyen-foursquare-fade.ng-leave {
+  transition: $adyen-foursquare-fade-time linear all;
+  opacity: 1;
+}
+
+.adyen-foursquare-fade.ng-leave.ng-leave-active {
+  opacity: 0;
+}

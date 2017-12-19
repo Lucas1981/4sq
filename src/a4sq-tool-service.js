@@ -1,4 +1,4 @@
-/* File: ./src/4sq-tool-service.js */
+/* File: ./src/a4sq-tool-service.js */
 
 export default class AdyenFoursquareToolService {
 

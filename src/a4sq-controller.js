@@ -1,4 +1,4 @@
-/* File: ./src/4sq-controller.js */
+/* File: ./src/a4sq-controller.js */
 
 export default class AdyenFoursquareController {
 
@@ -29,37 +29,16 @@ export default class AdyenFoursquareController {
     this.myTimeout = null;
     this.myTimeoutInterval = 300; /* 300 ms */
 
-    this.validateCode();
-
-  }
-
-  validateCode() {
-
-    let getVariables = this.AdyenFoursquareToolService.extractGetVariables();
-
-    /* Do we have a code? */
-    if(getVariables.hasOwnProperty('code')) {
-      /* If so, validate it */
-      this.AdyenFoursquareBackendService.exchangeCodeForAccessToken(getVariables.code, (result) => {
-        if(result !== false && !result.hasOwnProperty('error')) {
-          this.AdyenFoursquareBackendService.setAccessToken(result.access_token);
-          this.positionPromise.then(() => {
-            this.getVenues().then(() => {
-              this.AdyenFoursquareToolService.waitForCycle(() => {
-                this.isLoading = false;
-              });
-            });
-          });
-        }
-        else {
-          this.AdyenFoursquareBackendService.redirectToFoursquare();
-        }
+    this.AdyenFoursquareBackendService.validateCode().then(() => {
+      return this.positionPromise;
+    }).then(() => {
+      return this.getVenues();
+    }).then(() => {
+      this.AdyenFoursquareToolService.waitForCycle(() => {
+        this.isLoading = false;
       });
-    }
-    else {
-      /* Otherwise, redirect to login screen */
-      this.AdyenFoursquareBackendService.redirectToFoursquare();
-    }
+    });
+
   }
 
   radiusChanged() {

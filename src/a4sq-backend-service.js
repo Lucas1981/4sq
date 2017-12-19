@@ -1,10 +1,11 @@
-/* File: ./src/4sq-backend-service.js */
+/* File: ./src/a4sq-backend-service.js */
 
 export default class AdyenFoursquareBackendService {
 
-  constructor($http, $window) {
+  constructor($http, $window, AdyenFoursquareToolService) {
     this.$http = $http;
     this.$window = $window;
+    this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.accessToken = '';
     this.limit = 50;
   }
@@ -15,6 +16,32 @@ export default class AdyenFoursquareBackendService {
 
   getAccessToken() {
     return this.accessToken;
+  }
+
+  validateCode() {
+
+    let getVariables = this.AdyenFoursquareToolService.extractGetVariables();
+
+    return new Promise((resolve, reject) => {
+      /* Do we have a code? */
+      if(getVariables.hasOwnProperty('code')) {
+        /* If so, validate it */
+        this.exchangeCodeForAccessToken(getVariables.code, (result) => {
+          if(result !== false && !result.hasOwnProperty('error')) {
+            this.setAccessToken(result.access_token);
+            resolve('Access token set');
+          }
+          else {
+            this.redirectToFoursquare();
+          }
+        });
+      }
+      else {
+        /* Otherwise, redirect to login screen */
+        this.redirectToFoursquare();
+      }
+    });
+
   }
 
   exchangeCodeForAccessToken(code, callback) {

@@ -1,0 +1,12 @@
+/* File: ./components/overlay/overlay.scss */
+
+.adyen-foursquare-loading-overlay {
+  background: white;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 100vh;
+  vertical-align: middle;
+  z-index: 2;
+}

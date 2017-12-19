@@ -1,6 +1,6 @@
-/* File: ./src/4sq-component.js */
+/* File: ./src/a4sq-component.js */
 
-import template from './4sq.html';
+import template from './a4sq.html';
 
 export default {
   template: template,

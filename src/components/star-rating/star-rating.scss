@@ -1,0 +1,37 @@
+/* File: ./src/components/star-rating/star-rating.scss */
+
+/* Based on: https://codepen.io/Bluetidepro/pen/GkpEa */
+
+$adyen-foursquare-star-rating-gray-light: #eee;
+$adyen-foursquare-star-rating-gray-lighter: #777;
+$adyen-foursquare-star-yellow: #f0ad4e;
+
+.adyen-foursquare-star-rating {
+  unicode-bidi: bidi-override;
+  color: $adyen-foursquare-star-rating-gray-lighter;
+  font-size: 25px;
+  line-height: 22px;
+  height: 25px;
+  width: 100px;
+  margin: 0 0;
+  position: relative;
+  padding: 0;
+  text-shadow: 0px 1px 0 $adyen-foursquare-star-rating-gray-light;
+}
+
+.adyen-foursquare-star-rating-top {
+  color: $adyen-foursquare-star-yellow;
+  padding: 0;
+  position: absolute;
+  z-index: 1;
+  display: block;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.adyen-foursquare-star-rating-bottom {
+  padding: 0;
+  display: block;
+  z-index: 0;
+}

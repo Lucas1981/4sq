@@ -5,7 +5,6 @@ export class AdyenFoursquareController {
   constructor(
     AdyenFoursquareBackendService,
     AdyenFoursquareToolService,
-    AdyenFoursquareConstants,
     $window
   ) {
     const self = this;
@@ -25,9 +24,6 @@ export class AdyenFoursquareController {
     this.radius = 250;
     this.canRenderLL = false;
     this.lockdown = true;
-    this.clientId = AdyenFoursquareConstants.clientId;
-    this.clientSecred = AdyenFoursquareConstants.clientSecret;
-    this.redirectUri = AdyenFoursquareConstants.redirectUri;
 
     this.validateCode();
 
@@ -36,10 +32,7 @@ export class AdyenFoursquareController {
   validateCode() {
 
     const self = this;
-    const redirect = 'https://foursquare.com/oauth2/authenticate' +
-      '?client_id=' + this.clientId +
-      '&response_type=code' +
-      '&redirect_uri=' + this.redirectUri;
+    const redirect = '../backend/redirect.php';
 
     let getVariables = this.AdyenFoursquareToolService.extractGetVariables();
 
@@ -73,7 +66,9 @@ export class AdyenFoursquareController {
 
   getVenues() {
     const self = this;
-    self.AdyenFoursquareBackendService.getVenues(self.renderLL(), self.radius, function(result) {
+    this.lockdown = true;
+    this.AdyenFoursquareBackendService.getVenues(self.renderLL(), self.radius, function(result) {
+      self.lockdown = false;
       if(result !== false) {
         self.venues = result.groups[0].items;
       }
@@ -81,7 +76,7 @@ export class AdyenFoursquareController {
   }
 
   renderLL() {
-    return this.latitude + ',' + this.longitude;
+    return this.latitude.toString() + ',' + this.longitude.toString();
   }
 
 }

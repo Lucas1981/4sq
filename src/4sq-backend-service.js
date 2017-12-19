@@ -2,11 +2,8 @@
 
 export class AdyenFoursquareBackendService {
 
-  constructor($http, AdyenFoursquareConstants) {
+  constructor($http) {
     this.$http = $http;
-    this.clientId = AdyenFoursquareConstants.clientId;
-    this.clientSecret = AdyenFoursquareConstants.clientSecret;
-    this.redirectUri = AdyenFoursquareConstants.redirectUri;
     this.accessToken = '';
   }
 
@@ -22,10 +19,6 @@ export class AdyenFoursquareBackendService {
     const self = this;
     return this.$http.get('../backend/exchange-code-for-access-token.php', {
       params: {
-        client_id: self.clientId,
-        client_secret: self.clientSecret,
-        grant_type: 'authorization_code',
-        redirect_uri: self.redirectUri,
         code: code
       },
       headers: {

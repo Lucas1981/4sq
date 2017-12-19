@@ -1,18 +1,14 @@
 <?php
 
 /* First, extract the GET arguments */
-$client_id = $_GET['client_id'];
-$client_secret = $_GET['client_secret'];
-$grant_type = $_GET['grant_type'];
-$redirect_uri = $_GET['redirect_uri'];
 $code = $_GET['code'];
 
 /* Next, compile the proper URL */
 $url = 'https://foursquare.com/oauth2/access_token' .
-    '?client_id=' . $client_id .
-    '&client_secret=' . $client_secret .
+    '?client_id=TK5IMOUDNNXXXO3SGTIQY5HUEHCFLWAFVH2SFPZ1IWE5GIQR' .
+    '&client_secret=JOBVGABWPJGLQEWPWM4UKAMKFD5X52CBTC5VHG2TSOQPVQ5O' .
     '&grant_type=authorization_code' .
-    '&redirect_uri=' . $redirect_uri .
+    '&redirect_uri=http://localhost/adyen/4sq/dist' .
     '&code=' . $code;
 
 /* Then, exchange the code for an authorization code */

@@ -2,9 +2,11 @@
 
 export default class AdyenFoursquareBackendService {
 
-  constructor($http) {
+  constructor($http, $window) {
     this.$http = $http;
+    this.$window = $window;
     this.accessToken = '';
+    this.limit = 50;
   }
 
   setAccessToken(accessToken) {
@@ -39,13 +41,18 @@ export default class AdyenFoursquareBackendService {
         oauth_token: self.accessToken,
         v: "20170801",
         radius: radius,
-        limit: 50
+        limit: this.limit
       }
     }).then(function(response) {
       callback(response.data.response);
     }, function(err) {
       callback(false);
     });
+  }
+
+  redirectToFoursquare() {
+    const redirect = '../backend/redirect.php';
+    this.$window.location.href = redirect;
   }
 
 }

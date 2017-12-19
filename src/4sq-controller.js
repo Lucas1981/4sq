@@ -4,8 +4,7 @@ export default class AdyenFoursquareController {
 
   constructor(
     AdyenFoursquareBackendService,
-    AdyenFoursquareToolService,
-    $window
+    AdyenFoursquareToolService
   ) {
     const self = this;
 
@@ -18,7 +17,6 @@ export default class AdyenFoursquareController {
       });
     });
     this.venues = [];
-    this.$window = $window;
     this.AdyenFoursquareBackendService = AdyenFoursquareBackendService;
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.radius = 250;
@@ -35,7 +33,6 @@ export default class AdyenFoursquareController {
   validateCode() {
 
     const self = this;
-    const redirect = '../backend/redirect.php';
 
     let getVariables = this.AdyenFoursquareToolService.extractGetVariables();
 
@@ -50,13 +47,13 @@ export default class AdyenFoursquareController {
           });
         }
         else {
-          self.$window.location.href = redirect;
+          this.AdyenFoursquareBackendService.redirectToFoursquare();
         }
       });
     }
     else {
       /* Otherwise, redirect to login screen */
-      self.$window.location.href = redirect;
+      this.AdyenFoursquareBackendService.redirectToFoursquare();
     }
   }
 

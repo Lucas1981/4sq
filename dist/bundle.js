@@ -452,9 +452,11 @@ if(false) {
 
 class AdyenFoursquareBackendService {
 
-  constructor($http) {
+  constructor($http, $window) {
     this.$http = $http;
+    this.$window = $window;
     this.accessToken = '';
+    this.limit = 50;
   }
 
   setAccessToken(accessToken) {
@@ -489,13 +491,18 @@ class AdyenFoursquareBackendService {
         oauth_token: self.accessToken,
         v: "20170801",
         radius: radius,
-        limit: 50
+        limit: this.limit
       }
     }).then(function(response) {
       callback(response.data.response);
     }, function(err) {
       callback(false);
     });
+  }
+
+  redirectToFoursquare() {
+    const redirect = '../backend/redirect.php';
+    this.$window.location.href = redirect;
   }
 
 }
@@ -532,8 +539,7 @@ class AdyenFoursquareController {
 
   constructor(
     AdyenFoursquareBackendService,
-    AdyenFoursquareToolService,
-    $window
+    AdyenFoursquareToolService
   ) {
     const self = this;
 
@@ -546,7 +552,6 @@ class AdyenFoursquareController {
       });
     });
     this.venues = [];
-    this.$window = $window;
     this.AdyenFoursquareBackendService = AdyenFoursquareBackendService;
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.radius = 250;
@@ -563,7 +568,6 @@ class AdyenFoursquareController {
   validateCode() {
 
     const self = this;
-    const redirect = '../backend/redirect.php';
 
     let getVariables = this.AdyenFoursquareToolService.extractGetVariables();
 
@@ -578,13 +582,13 @@ class AdyenFoursquareController {
           });
         }
         else {
-          self.$window.location.href = redirect;
+          this.AdyenFoursquareBackendService.redirectToFoursquare();
         }
       });
     }
     else {
       /* Otherwise, redirect to login screen */
-      self.$window.location.href = redirect;
+      this.AdyenFoursquareBackendService.redirectToFoursquare();
     }
   }
 

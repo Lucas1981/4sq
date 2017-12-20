@@ -44,3 +44,12 @@ $transition-time: .2s;
   background: $adyen-foursquare-slider-thumb-background-color;
   cursor: pointer;
 }
+
+/* Bugfix */
+.adyen-foursquare-slider::-moz-focus-outer {
+  border: 0;
+}
+
+.adyen-foursquare-slider::-moz-range-track {
+  background-color: rgba(0, 0, 0, 0);
+}

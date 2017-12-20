@@ -17,6 +17,9 @@ export default class AdyenFoursquareController {
     this.AdyenFoursquareBackendService = AdyenFoursquareBackendService;
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.radius = 400;
+    this.minRadius = 25;
+    this.maxRadius = 3000;
+    this.radiusStep = 25;
     this.canRenderLL = false;
     this.lockdown = true;
     this.$timeout = $timeout;

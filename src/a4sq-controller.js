@@ -23,7 +23,10 @@ export default class AdyenFoursquareController {
     this.$document = $document;
     this.myTimeout = null;
     this.myTimeoutInterval = 300; /* 300 ms */
+    this.initiate();
+  }
 
+  initiate() {
     this.AdyenFoursquareBackendService.validateCode().then(() => {
       return this.getLocation();
     }).then(() => {
@@ -34,7 +37,6 @@ export default class AdyenFoursquareController {
         this.lockdown = false;
       });
     });
-
   }
 
   getLocation() {
@@ -99,11 +101,6 @@ export default class AdyenFoursquareController {
     return ( e.venue.hasOwnProperty('hours') && e.venue.hours.hasOwnProperty('status') ) ?
       e.venue.hours.status :
       'No information available';
-  }
-
-  determineMobileRating(rating) {
-    if(rating == -1) return 'No rating';
-    return rating + ' / 10';
   }
 
 }

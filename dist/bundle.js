@@ -8211,6 +8211,7 @@ class AdyenFoursquareBackendService {
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.accessToken = '';
     this.limit = 50;
+    this.basepath = 'backend/';
   }
 
   setAccessToken(accessToken) {
@@ -8248,7 +8249,7 @@ class AdyenFoursquareBackendService {
   }
 
   exchangeCodeForAccessToken(code, callback) {
-    return this.$http.get('../backend/exchange-code-for-access-token.php', {
+    return this.$http.get(this.basepath + 'exchange-code-for-access-token.php', {
       params: {
         code: code
       },
@@ -8279,7 +8280,7 @@ class AdyenFoursquareBackendService {
   }
 
   redirectToFoursquare() {
-    const redirect = '../backend/redirect.php';
+    const redirect = this.basepath + 'redirect.php';
     this.$window.location.href = redirect;
   }
 
@@ -8369,7 +8370,10 @@ class AdyenFoursquareController {
     this.$document = $document;
     this.myTimeout = null;
     this.myTimeoutInterval = 300; /* 300 ms */
+    this.initiate();
+  }
 
+  initiate() {
     this.AdyenFoursquareBackendService.validateCode().then(() => {
       return this.getLocation();
     }).then(() => {
@@ -8380,7 +8384,6 @@ class AdyenFoursquareController {
         this.lockdown = false;
       });
     });
-
   }
 
   getLocation() {
@@ -8445,11 +8448,6 @@ class AdyenFoursquareController {
     return ( e.venue.hasOwnProperty('hours') && e.venue.hours.hasOwnProperty('status') ) ?
       e.venue.hours.status :
       'No information available';
-  }
-
-  determineMobileRating(rating) {
-    if(rating == -1) return 'No rating';
-    return rating + ' / 10';
   }
 
 }

@@ -8,6 +8,7 @@ export default class AdyenFoursquareBackendService {
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.accessToken = '';
     this.limit = 50;
+    this.basepath = 'backend/';
   }
 
   setAccessToken(accessToken) {
@@ -45,7 +46,7 @@ export default class AdyenFoursquareBackendService {
   }
 
   exchangeCodeForAccessToken(code, callback) {
-    return this.$http.get('../backend/exchange-code-for-access-token.php', {
+    return this.$http.get(this.basepath + 'exchange-code-for-access-token.php', {
       params: {
         code: code
       },
@@ -76,7 +77,7 @@ export default class AdyenFoursquareBackendService {
   }
 
   redirectToFoursquare() {
-    const redirect = '../backend/redirect.php';
+    const redirect = this.basepath + 'redirect.php';
     this.$window.location.href = redirect;
   }
 

@@ -9,15 +9,10 @@ export default class AdyenFoursquareController {
     $document
   ) {
 
-    this.positionPromise = new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
-        this.lockdown = false;
-        resolve('Latitude and longitude have been obtained');
-      });
-    });
+    this.latitude = 0;
+    this.longitude = 0;
     this.isLoading = true;
+    this.isUpdating = false;
     this.venues = [];
     this.AdyenFoursquareBackendService = AdyenFoursquareBackendService;
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
@@ -30,33 +25,35 @@ export default class AdyenFoursquareController {
     this.myTimeoutInterval = 300; /* 300 ms */
 
     this.AdyenFoursquareBackendService.validateCode().then(() => {
-      return this.positionPromise;
+      return this.getLocation();
     }).then(() => {
       return this.getVenues();
     }).then(() => {
       this.AdyenFoursquareToolService.waitForCycle(() => {
         this.isLoading = false;
+        this.lockdown = false;
       });
     });
 
   }
 
-  radiusChanged() {
-
-    if(this.myTimeout !== 0) this.$timeout.cancel(this.myTimeout);
-
-    this.myTimeout = this.$timeout(() => {
-      this.positionPromise.then(() => {
-        if(this.AdyenFoursquareBackendService.getAccessToken() !== '') this.getVenues();
+  getLocation() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+        resolve('Latitude and longitude have been obtained');
       });
-    }, this.myTimeoutInterval);
+    });
   }
 
   getVenues() {
+    this.isUpdating = true;
     return new Promise((resolve, reject) => {
       this.lockdown = true;
       this.AdyenFoursquareBackendService.getVenues(this.renderLL(), this.radius, (result) => {
         this.lockdown = false;
+        this.isUpdating = false;
         if(result !== false) {
           this.headerLocation = result.headerLocation;
           this.venues = this.renderMapping(result.groups[0].items);
@@ -64,6 +61,15 @@ export default class AdyenFoursquareController {
         }
       });
     });
+  }
+
+  radiusChanged() {
+
+    if(this.myTimeout !== 0) this.$timeout.cancel(this.myTimeout);
+
+    this.myTimeout = this.$timeout(() => {
+      if(this.AdyenFoursquareBackendService.getAccessToken() !== '') this.getVenues();
+    }, this.myTimeoutInterval);
   }
 
   renderLL() {
@@ -77,9 +83,16 @@ export default class AdyenFoursquareController {
         location: e.venue.location.address || 'Unknown',
         openingHours: this.determineOpeningHours(e),
         phone: e.venue.contact.phone || 'Unknown',
-        rating: e.venue.rating || -1
+        rating: e.venue.rating || -1,
+        distance: e.venue.location.distance || 'Unknown',
+        url: e.venue.url
       };
     });
+  }
+
+  hasUrl(venue) {
+    if(venue.url) return true;
+    return false;
   }
 
   determineOpeningHours(e) {

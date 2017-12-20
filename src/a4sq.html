@@ -17,6 +17,7 @@
 
     <h3>{{adyenFoursquareCtrl.venues.length}} venues found in a {{adyenFoursquareCtrl.radius}} meter radius around {{adyenFoursquareCtrl.headerLocation}} </h3>
 
+    <p>Move the slider around to change the radius with steps of 25 meters <span ng-if="adyenFoursquareCtrl.isUpdating"><span class="glyphicon glyphicon-repeat adyen-foursquare-loader"></span> updating...</span></p>
     <div class="adyen-foursquare-slider-container">
       <input
         type="range"
@@ -44,8 +45,9 @@
     <table class="table table-striped visible-md visible-lg">
       <thead>
         <tr>
-          <th class="col-md-3">Name</th>
+          <th class="col-md-2">Name</th>
           <th class="col-md-2">Location</th>
+          <th class="col-md-1">Distance</th>
           <th class="col-md-3">Open?</th>
           <th class="col-md-2">Phone</th>
           <th class="col-md-2">Rating</th>
@@ -53,8 +55,14 @@
       </thead>
       <tbody>
         <tr ng-repeat="venue in adyenFoursquareCtrl.venues">
-          <td class="col-md-3">{{venue.name}}</td>
+          <td class="col-md-2">
+            <span ng-if="!adyenFoursquareCtrl.hasUrl(venue)">{{venue.name}}</span>
+            <span ng-if="adyenFoursquareCtrl.hasUrl(venue)">
+              <a href="{{venue.url}}" target="_blank">{{venue.name}}</a>
+            </span>
+          </td>
           <td class="col-md-2">{{venue.location}}</td>
+          <td class="col-md-1">{{venue.distance}} m</td>
           <td class="col-md-3">{{venue.openingHours}}</td>
           <td class="col-md-2">{{venue.phone}}</td>
           <td class="col-md-2">
@@ -78,11 +86,24 @@
     <table class="table table-striped visible-xs visible-sm">
       <tr ng-repeat="venue in adyenFoursquareCtrl.venues">
         <td>
-          <p>Name: {{venue.name}}</p>
-          <p>Location: {{venue.location}}</p>
+          <p><strong>
+            <span ng-if="!adyenFoursquareCtrl.hasUrl(venue)">
+              {{venue.name}}
+            </span>
+            <span ng-if="adyenFoursquareCtrl.hasUrl(venue)">
+              <a href="{{venue.url}}" target="_blank">{{venue.name}}</a>
+            </span>
+          </strong></p>
+          <p>{{venue.location}}</p>
+          <p>Distance: {{venue.distance}} m</p>
           <p>Open: {{venue.openingHours}}</p>
           <p>Phone: {{venue.phone}}</p>
-          <p>Rating: {{adyenFoursquareCtrl.determineMobileRating(venue.rating)}}</p>
+          <p>
+            <adyen-foursquare-star-rating
+              percentage="{{venue.rating * 10}}"
+            >
+            </adyen-foursquare-star-rating>
+          </p>
         </td>
       </tr>
     </table>

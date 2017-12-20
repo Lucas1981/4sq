@@ -8,7 +8,6 @@ export default class AdyenFoursquareBackendService {
     this.AdyenFoursquareToolService = AdyenFoursquareToolService;
     this.accessToken = '';
     this.limit = 50;
-    this.basepath = 'backend/';
   }
 
   setAccessToken(accessToken) {
@@ -48,7 +47,8 @@ export default class AdyenFoursquareBackendService {
   exchangeCodeForAccessToken(code, callback) {
     return this.$http.get(this.basepath + 'exchange-code-for-access-token.php', {
       params: {
-        code: code
+        code: code,
+        redirectUri: this.redirectUri
       },
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
